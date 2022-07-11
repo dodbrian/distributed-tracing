@@ -10,8 +10,8 @@ public class BillingService {
     @Autowired
     private Tracer tracer;
 
-    public void payment(Span parentSpan) {
-        Span span = tracer.buildSpan("payment").asChildOf(parentSpan).start();
+    public void payment() {
+        Span span = tracer.buildSpan("payment").start();
 
         try {
             Thread.sleep(200);

@@ -1,5 +1,6 @@
 package com.zhaohuabing.demo.services;
 
+import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +13,19 @@ public class DeliveryService {
     @Autowired
     private LogisticsService logisticsService;
 
-    public void arrangeDelivery(Span parentSpan) {
-        Span span = tracer.buildSpan("arrangeDelivery").asChildOf(parentSpan).start();
-
-        try {
-            Thread.sleep(100);
-            logisticsService.transport(span);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void arrangeDelivery() {
+        Span span = tracer.buildSpan("arrangeDelivery").start();
+        try (Scope scope = tracer.scopeManager().activate(span)) {
+            try {
+                Thread.sleep(100);
+                logisticsService.transport();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            span.log(e.getLocalizedMessage());
+        } finally {
+            span.finish();
         }
-
-        span.finish();
     }
 }

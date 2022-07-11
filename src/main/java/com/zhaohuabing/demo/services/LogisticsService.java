@@ -10,8 +10,8 @@ public class LogisticsService {
     @Autowired
     private Tracer tracer;
 
-    public void transport(Span parentSpan) {
-        Span span = tracer.buildSpan("transport").asChildOf(parentSpan).start();
+    public void transport() {
+        Span span = tracer.buildSpan("transport").start();
 
         try {
             Thread.sleep(200);

@@ -3,6 +3,7 @@ package com.zhaohuabing.demo;
 import com.zhaohuabing.demo.services.BillingService;
 import com.zhaohuabing.demo.services.DeliveryService;
 import com.zhaohuabing.demo.services.InventoryService;
+import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,19 +31,23 @@ public class EShopController {
 
     @RequestMapping(path = "/checkout")
     public String checkout(@RequestHeader HttpHeaders headers) {
-        Span span = tracer.buildSpan("checkout").start();
         String result = "You have successfully checked out your shopping cart.\n";
 
-        try {
-            inventoryService.createOrder(span);
-            billingService.payment(span);
-            deliveryService.arrangeDelivery(span);
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        Span span = tracer.buildSpan("checkout").start();
+        try (Scope scope = tracer.scopeManager().activate(span)) {
+            try {
+                inventoryService.createOrder();
+                billingService.payment();
+                deliveryService.arrangeDelivery();
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            span.log(e.getLocalizedMessage());
+        } finally {
+            span.finish();
         }
-
-        span.finish();
 
         return result;
     }

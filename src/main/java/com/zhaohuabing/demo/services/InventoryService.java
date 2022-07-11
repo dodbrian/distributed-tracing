@@ -10,8 +10,8 @@ public class InventoryService {
     @Autowired
     private Tracer tracer;
 
-    public void createOrder(Span parentSpan) {
-        Span span = tracer.buildSpan("transport").asChildOf(parentSpan).start();
+    public void createOrder() {
+        Span span = tracer.buildSpan("transport").start();
 
         try {
             Thread.sleep(200);

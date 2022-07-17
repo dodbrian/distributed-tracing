@@ -30,8 +30,7 @@ public class EShopController {
         HttpEntity entity = new HttpEntity("", headers);
 
         Span span = tracer.buildSpan("checkout").start();
-        try (
-                Scope scope = tracer.scopeManager().activate(span)) {
+        try (Scope scope = tracer.scopeManager().activate(span)) {
             try {
                 result = restTemplate.exchange("http://inventory:8080/createOrder", HttpMethod.GET, entity, String.class).getBody();
                 result = restTemplate.exchange("http://billing:8080/payment", HttpMethod.GET, entity, String.class).getBody();
@@ -41,8 +40,7 @@ public class EShopController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             span.log(e.getLocalizedMessage());
         } finally {
             span.finish();

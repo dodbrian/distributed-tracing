@@ -4,7 +4,7 @@ docker rm demo jaeger
 docker run -d --name demo \
   --add-host host.docker.internal:host-gateway \
   -p 80:8080 \
-  zhaohuabing/liveproject-tracing
+  dodbrian-liveproject-tracing
 
 docker run -d --name jaeger \
   -p 14268:14268 \

@@ -4,8 +4,9 @@ MAINTAINER Huabing Zhao <zhaohuabing@gmail.com>
 
 ENV APP_HOME /app/
 # for MacOS
-ENV JAEGER_ENDPOINT="http://host.docker.internal:14268/api/traces"
+#ENV JAEGER_ENDPOINT="http://host.docker.internal:14268/api/traces"
 # for Linux
+ENV JAEGER_ENDPOINT="http://jaeger:14268/api/traces"
 # ENV JAEGER_ENDPOINT="http://127.0.0.1:14268/api/traces"
 ENV JAEGER_SAMPLER_TYPE=const
 ENV JAEGER_SAMPLER_PARAM=1

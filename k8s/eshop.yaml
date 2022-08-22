@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eshop-deployment
+  labels:
+    app: eshop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eshop
+  template:
+    metadata:
+      labels:
+        app: eshop
+    spec:
+      containers:
+        - name: eshop
+          image: dodbrian-liveproject-tracing:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: eshop
+spec:
+  selector:
+    app: eshop
+  ports:
+    - port: 8080
+      targetPort: 8080

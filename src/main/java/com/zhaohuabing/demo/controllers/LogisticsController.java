@@ -13,7 +13,7 @@ public class LogisticsController {
     private LogisticsService logisticsService;
 
     @RequestMapping(value = "/transport")
-    public void transport(@RequestHeader HttpHeaders headers) {
-        logisticsService.transport(headers);
+    public String transport(@RequestHeader HttpHeaders headers) {
+        return logisticsService.transport(headers);
     }
 }

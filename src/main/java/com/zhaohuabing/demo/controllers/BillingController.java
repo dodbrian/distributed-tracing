@@ -13,7 +13,7 @@ public class BillingController {
     private BillingService billingService;
 
     @RequestMapping(value = "/payment")
-    public void payment(@RequestHeader HttpHeaders headers) {
-        billingService.payment(headers);
+    public String payment(@RequestHeader HttpHeaders headers) {
+        return billingService.payment(headers);
     }
 }

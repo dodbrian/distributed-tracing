@@ -13,7 +13,7 @@ public class InventoryController {
     private InventoryService inventoryService;
 
     @RequestMapping(value = "/createOrder")
-    public void createOrder(@RequestHeader HttpHeaders headers) {
-        inventoryService.createOrder(headers);
+    public String createOrder(@RequestHeader HttpHeaders headers) {
+        return inventoryService.createOrder(headers);
     }
 }

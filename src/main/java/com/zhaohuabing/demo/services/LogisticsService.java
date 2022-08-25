@@ -14,7 +14,7 @@ public class LogisticsService {
     @Autowired
     private Tracer tracer;
 
-    public void transport(HttpHeaders headers) {
+    public String transport(HttpHeaders headers) {
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
         Span span = tracer.buildSpan("transport").asChildOf(parent).start();
 
@@ -25,5 +25,7 @@ public class LogisticsService {
         }
 
         span.finish();
+
+        return "Order delivered<br>";
     }
 }

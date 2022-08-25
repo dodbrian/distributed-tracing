@@ -14,9 +14,9 @@ public class InventoryService {
     @Autowired
     private Tracer tracer;
 
-    public void createOrder(HttpHeaders headers) {
+    public String createOrder(HttpHeaders headers) {
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
-        Span span = tracer.buildSpan("transport").asChildOf(parent).start();
+        Span span = tracer.buildSpan("createOrder").asChildOf(parent).start();
 
         try {
             Thread.sleep(200);
@@ -25,5 +25,7 @@ public class InventoryService {
         }
 
         span.finish();
+
+        return "Order created<br>";
     }
 }

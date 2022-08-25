@@ -14,7 +14,7 @@ public class BillingService {
     @Autowired
     private Tracer tracer;
 
-    public void payment(HttpHeaders headers) {
+    public String payment(HttpHeaders headers) {
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
         Span span = tracer.buildSpan("payment").asChildOf(parent).start();
 
@@ -25,5 +25,7 @@ public class BillingService {
         }
 
         span.finish();
+
+        return "Payment accepted<br>";
     }
 }

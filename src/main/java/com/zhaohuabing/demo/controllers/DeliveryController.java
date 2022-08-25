@@ -1,4 +1,4 @@
-package com.zhaohuabing.demo;
+package com.zhaohuabing.demo.controllers;
 
 import com.zhaohuabing.demo.services.DeliveryService;
 import org.springframework.beans.factory.annotation.Autowired;

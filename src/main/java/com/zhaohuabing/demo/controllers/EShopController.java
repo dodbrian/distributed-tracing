@@ -1,7 +1,6 @@
 package com.zhaohuabing.demo.controllers;
 
 import com.zhaohuabing.demo.HttpHeaderCarrier;
-import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
@@ -27,22 +26,20 @@ public class EShopController {
 
     @RequestMapping(value = "/checkout")
     public String checkout(@RequestHeader HttpHeaders headers) {
-        String result = "You have successfully checked out your shopping cart.\n";
-
-        HttpEntity entity = new HttpEntity("", headers);
+        String result = "You have successfully checked out your shopping cart.<br>";
 
         Span span = tracer.buildSpan("checkout").start();
-        try (Scope scope = tracer.scopeManager().activate(span)) {
-            tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
-            try {
-                result = restTemplate.exchange("http://inventory:8080/createOrder", HttpMethod.GET, entity, String.class).getBody();
-                result = restTemplate.exchange("http://billing:8080/payment", HttpMethod.GET, entity, String.class).getBody();
-                result = restTemplate.exchange("http://delivery:8080/arrangeDelivery", HttpMethod.GET, entity, String.class).getBody();
+        tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
 
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            HttpEntity entity = new HttpEntity("", headers);
+            result += restTemplate.exchange("http://inventory:8080/createOrder", HttpMethod.GET, entity, String.class).getBody();
+            result += restTemplate.exchange("http://billing:8080/payment", HttpMethod.GET, entity, String.class).getBody();
+            result += restTemplate.exchange("http://delivery:8080/arrangeDelivery", HttpMethod.GET, entity, String.class).getBody();
+
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             span.log(e.getLocalizedMessage());
         } finally {

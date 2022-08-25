@@ -3,6 +3,7 @@ package com.zhaohuabing.demo.services;
 import com.zhaohuabing.demo.HttpHeaderCarrier;
 import io.opentracing.Scope;
 import io.opentracing.Span;
+import io.opentracing.SpanContext;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +22,16 @@ public class DeliveryService {
     private RestTemplate restTemplate;
 
     public String arrangeDelivery(HttpHeaders headers) {
-        String result = null;
-        HttpEntity entity = new HttpEntity("", headers);
-        Span span = tracer.buildSpan("arrangeDelivery").start();
+        String result = "Arranging delivery<br>";
+        SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
+        Span span = tracer.buildSpan("arrangeDelivery").asChildOf(parent).start();
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
             tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
 
             try {
-                result = restTemplate.exchange("http://logistics:8080/transport", HttpMethod.GET, entity, String.class).getBody();
+                HttpEntity entity = new HttpEntity("", headers);
+                result += restTemplate.exchange("http://logistics:8080/transport", HttpMethod.GET, entity, String.class).getBody();
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();

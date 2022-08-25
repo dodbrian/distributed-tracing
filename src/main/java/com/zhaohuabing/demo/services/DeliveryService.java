@@ -1,8 +1,10 @@
 package com.zhaohuabing.demo.services;
 
+import com.zhaohuabing.demo.HttpHeaderCarrier;
 import io.opentracing.Scope;
 import io.opentracing.Span;
 import io.opentracing.Tracer;
+import io.opentracing.propagation.Format;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +26,8 @@ public class DeliveryService {
         Span span = tracer.buildSpan("arrangeDelivery").start();
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
+            tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
+
             try {
                 result = restTemplate.exchange("http://logistics:8080/transport", HttpMethod.GET, entity, String.class).getBody();
                 Thread.sleep(100);

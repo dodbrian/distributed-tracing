@@ -22,9 +22,10 @@ public class DeliveryService {
     private RestTemplate restTemplate;
 
     public String arrangeDelivery(HttpHeaders headers) {
-        String result = "Arranging delivery<br>";
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
         Span span = tracer.buildSpan("arrangeDelivery").asChildOf(parent).start();
+        String user = span.getBaggageItem("user");
+        String result = String.format("Arranging delivery for the user: %s<br>\n", user);
 
         try (Scope scope = tracer.scopeManager().activate(span)) {
             tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));

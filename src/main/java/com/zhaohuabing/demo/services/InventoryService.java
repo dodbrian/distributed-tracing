@@ -17,6 +17,7 @@ public class InventoryService {
     public String createOrder(HttpHeaders headers) {
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
         Span span = tracer.buildSpan("createOrder").asChildOf(parent).start();
+        String user = span.getBaggageItem("user");
 
         try {
             Thread.sleep(200);
@@ -26,6 +27,6 @@ public class InventoryService {
 
         span.finish();
 
-        return "Order created<br>";
+        return String.format("Order created by the user: %s<br>\n", user);
     }
 }

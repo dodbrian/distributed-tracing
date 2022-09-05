@@ -26,9 +26,10 @@ public class EShopController {
 
     @RequestMapping(value = "/checkout")
     public String checkout(@RequestHeader HttpHeaders headers) {
-        String result = "You have successfully checked out your shopping cart.<br>";
+        String result = "You have successfully checked out your shopping cart.<br>\n";
 
         Span span = tracer.buildSpan("checkout").start();
+        span.setBaggageItem("user", headers.getFirst("user"));
         tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
 
         try {

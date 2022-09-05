@@ -17,6 +17,7 @@ public class BillingService {
     public String payment(HttpHeaders headers) {
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
         Span span = tracer.buildSpan("payment").asChildOf(parent).start();
+        String user = span.getBaggageItem("user");
 
         try {
             Thread.sleep(200);
@@ -26,6 +27,6 @@ public class BillingService {
 
         span.finish();
 
-        return "Payment accepted<br>";
+        return String.format("Payment accepted by the user: %s<br>\n", user);
     }
 }

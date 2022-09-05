@@ -17,6 +17,7 @@ public class LogisticsService {
     public String transport(HttpHeaders headers) {
         SpanContext parent = tracer.extract(Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
         Span span = tracer.buildSpan("transport").asChildOf(parent).start();
+        String user = span.getBaggageItem("user");
 
         try {
             Thread.sleep(200);
@@ -26,6 +27,6 @@ public class LogisticsService {
 
         span.finish();
 
-        return "Order delivered<br>";
+        return String.format("Order delivered to the user: %s<br>\n", user);
     }
 }

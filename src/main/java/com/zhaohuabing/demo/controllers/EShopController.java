@@ -1,9 +1,5 @@
 package com.zhaohuabing.demo.controllers;
 
-import com.zhaohuabing.demo.HttpHeaderCarrier;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.propagation.Format;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,18 +15,11 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class EShopController {
     @Autowired
-    private Tracer tracer;
-
-    @Autowired
     private RestTemplate restTemplate;
 
     @RequestMapping(value = "/checkout")
     public String checkout(@RequestHeader HttpHeaders headers) {
         String result = "You have successfully checked out your shopping cart.<br>\n";
-
-        Span span = tracer.buildSpan("checkout").start();
-        span.setBaggageItem("user", headers.getFirst("user"));
-        tracer.inject(span.context(), Format.Builtin.HTTP_HEADERS, new HttpHeaderCarrier(headers));
 
         try {
             HttpEntity entity = new HttpEntity("", headers);
@@ -41,10 +30,6 @@ public class EShopController {
             Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            span.log(e.getLocalizedMessage());
-        } finally {
-            span.finish();
         }
 
         return result;

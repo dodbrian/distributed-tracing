@@ -29,9 +29,9 @@ spec:
   selector:
     app: jaeger
   ports:
-    - name: ui
+    - name: http-ui
       port: 16686
       targetPort: 16686
-    - name: control
+    - name: http-control
       port: 14268
       targetPort: 14268
